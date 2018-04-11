@@ -54,4 +54,4 @@ def exception_job(host, port, username, password, max_duration, *args, **kwargs)
                                           job_status=job['job_status'],
                                           last_modified=job['last_modified'],
                                           duration=job['duration']).__dict__)
-    return exception_job_list
+    return {'exception_job_count': len(exception_job_list), 'exception_job_list': exception_job_list}
