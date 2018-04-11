@@ -22,4 +22,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     output = args.func(**vars(args))
-    print json.dumps(output, indent=4)
+    print json.dumps(output, indent=4, ensure_ascii=False)

@@ -5,6 +5,10 @@
 from enum import Enum
 import requests
 import datetime
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 KYLIN_API_GET_JOB_LIST = 'http://{host}:{port}/kylin/api/jobs'
 
@@ -28,12 +32,13 @@ class TimeFilter(Enum):
 
 
 class Job():
-    def __init__(self, name, related_cube, job_status, last_modified, duration):
+    def __init__(self, name, related_cube, job_status, last_modified, duration, message):
         self.name = name
         self.related_cube = related_cube
         self.job_status = job_status
         self.last_modified = datetime.datetime.fromtimestamp(last_modified / 1000.0).isoformat(' ')
         self.duration = str(datetime.timedelta(seconds=duration))
+        self.message = message
 
 
 def exception_job(host, port, username, password, max_duration, *args, **kwargs):
@@ -49,9 +54,14 @@ def exception_job(host, port, username, password, max_duration, *args, **kwargs)
     exception_job_list = []
     for job in job_list:
         if job['job_status'] == JobStatus.ERROR.name or job['duration'] > max_duration:
+            if job['job_status'] == JobStatus.ERROR.name:
+                message = "job状态为ERROR"
+            else:
+                message = "job执行时间超过%d秒" % max_duration
             exception_job_list.append(Job(name=job['name'],
                                           related_cube=job['related_cube'],
                                           job_status=job['job_status'],
                                           last_modified=job['last_modified'],
-                                          duration=job['duration']).__dict__)
+                                          duration=job['duration'],
+                                          message=message).__dict__)
     return {'exception_job_count': len(exception_job_list), 'exception_job_list': exception_job_list}
