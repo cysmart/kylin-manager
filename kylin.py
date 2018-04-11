@@ -45,7 +45,7 @@ def exception_job(host, port, username, password, max_duration, *args, **kwargs)
     payload = {'timeFilter': TimeFilter.LAST_ONE_DAY.value,
                'limit': 1000,
                'status': [JobStatus.NEW.value, JobStatus.PENDING.value, JobStatus.RUNNING.value,
-                          JobStatus.ERROR.value, JobStatus.FINISHED.value]}
+                          JobStatus.ERROR.value]}
     get_job_list_url = KYLIN_API_GET_JOB_LIST.format(host=host, port=port)
     r = requests.get(get_job_list_url, auth=(username, password), params=payload)
     r.raise_for_status()
